@@ -1,0 +1,71 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  annotations:
+    argocd.argoproj.io/hook: Sync
+    argocd.argoproj.io/sync-wave: "1"
+    argocd.argoproj.io/hook-delete-policy: BeforeHookCreation
+  name: le-cert-job
+  namespace: letsencrypt-job
+spec:
+  template:
+    spec:
+      containers:
+        - image: quay.io/pittar/oc-cli:latest
+          envFrom:
+            - secretRef:
+                name: aws-creds
+          command:
+            - /bin/bash
+            - -c
+            - |
+              #!/usr/bin/env bash
+
+              mkdir -p /tmp/source
+              mkdir -p /tmp/acme-home
+              mkdir -p /tmp/cert-home
+              mkdir -p /tmp/config-home
+
+              cd /tmp/source
+
+              git clone https://github.com/neilpang/acme.sh
+              cd acme.sh
+
+              echo "AWS CREDS:"
+              echo $AWS_ACCESS_KEY_ID
+              echo $AWS_SECRET_ACCESS_KEY
+
+              sed -i '2i AWS_ACCESS_KEY_ID="'$AWS_ACCESS_KEY_ID'" ' dnsapi/dns_aws.sh
+              sed -i '3i AWS_SECRET_ACCESS_KEY="'$AWS_SECRET_ACCESS_KEY'" ' dnsapi/dns_aws.sh
+
+              LE_WILDCARD=$(oc get ingresscontroller default -n openshift-ingress-operator -o jsonpath='{.status.domain}')
+
+              echo "LE_WILDCARD: $LE_WILDCARD"
+
+              LE_API=$( echo "$LE_WILDCARD" | cut -d'.' -f2- )
+              LE_API="api.$LE_API"
+
+              echo "API: $LE_API"
+
+              # Add --staging to debug
+              ./acme.sh --issue -d $LE_API -d *.$LE_WILDCARD --dns dns_aws --debug  --home acme-home --cert-home cert-home --config-home config-home
+
+              # Set and create a permanent cert dir.
+              FINAL_CERT_DIR=certs
+              mkdir -p $FINAL_CERT_DIR; 
+
+              # Add --staging to debug
+              ./acme.sh --install-cert -d $LE_API -d *.$LE_WILDCARD --cert-file $FINAL_CERT_DIR/cert.pem --key-file $FINAL_CERT_DIR/key.pem --fullchain-file $FINAL_CERT_DIR/fullchain.pem --ca-file $FINAL_CERT_DIR/ca.cer --home acme-home --cert-home cert-home --config-home config-home
+
+              oc create secret tls router-certs --cert=$FINAL_CERT_DIR/fullchain.pem --key=$FINAL_CERT_DIR/key.pem -n openshift-ingress
+              oc patch ingresscontroller default -n openshift-ingress-operator --type=merge --patch='{"spec": { "defaultCertificate": { "name": "router-certs" }}}'
+
+              echo "Done!"
+
+          imagePullPolicy: Always
+          name: le-cert-job
+      dnsPolicy: ClusterFirst
+      restartPolicy: Never
+      serviceAccount: le-cert-job
+      serviceAccountName: le-cert-job
+      terminationGracePeriodSeconds: 30

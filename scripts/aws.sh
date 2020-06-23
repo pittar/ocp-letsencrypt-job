@@ -9,7 +9,13 @@ else
     echo "STAGING set to 'false'.  Will attempt to generate real certs."
 fi
 
-alias acme.sh="/source/acme.sh-$ACME-VERSION/acme.sh"
+cd /source/acme.sh-$ACME_VERSION
+echo "Now in dir: "
+pwd
+
+echo "Creating final certs dir."
+FINAL_CERTS=/tmp/final
+mkdir -p $FINAL_CERTS
 
 # Get apps wildcard domain.
 LE_WILDCARD=$(oc get ingresscontroller default -n openshift-ingress-operator -o jsonpath='{.status.domain}')
@@ -21,13 +27,13 @@ LE_API="api.$LE_API"
 echo "API: $LE_API"
 
 issue_args=(
-    --install
+    --issue
     --dns dns_aws
     -d "$LE_API"
     -d "*.$LE_WILDCARD"
-    --home "$ACME_HOME"
-    --cert-home "$CERT_HOME"
-    --config-home "$CONFIG_HOME"
+    --home /tmp
+    --cert-home /tmp
+    --config-home /tmp
     --debug
 )
 if [ "$STAGING" == true ] ; then
@@ -35,7 +41,8 @@ if [ "$STAGING" == true ] ; then
 fi
 
 # Issue certs.
-/source/acme.sh-$ACME_VERSION/acme.sh "${issue_args[@]}"
+echo "Run: ./acme.sh ${issue_args[@]}"
+./acme.sh "${issue_args[@]}"
 
 install_args=(
     --install-cert
@@ -45,9 +52,9 @@ install_args=(
     --key-file "$FINAL_CERTS/key.pem"
     --fullchain-file "$FINAL_CERTS/fullchain.pem"
     --ca-file "$FINAL_CERTS/ca.cer"
-    --home "$ACME_HOME"
-    --cert-home "$CERT_HOME"
-    --config-home "$CONFIG_HOME"
+    --home /tmp
+    --cert-home /tmp
+    --config-home /tmp
     --debug
 )
 if [ "$STAGING" == true ] ; then
@@ -55,7 +62,8 @@ if [ "$STAGING" == true ] ; then
 fi
 
 # Run install.
-/source/acme.sh-$ACME_VERSION/acme.sh "${install_args[@]}"
+echo "Run: ./acme.sh ${install_args[@]}"
+./acme.sh "${install_args[@]}"
 
 if [ -f "$FINAL_CERTS/fullchain.pem" ]; then
     secret_args=(
@@ -68,8 +76,8 @@ if [ -f "$FINAL_CERTS/fullchain.pem" ]; then
         -n openshift-ingress
     )
     if [ "$STAGING" == true ] ; then
-        install_args+=(--dry-run=true)
-        install_args+=(-o yaml)
+        secret_args+=(--dry-run=true)
+        secret_args+=(-o yaml)
     fi
 
     # Create tls secret.  Only dry-run and ouptut yaml if STAGING.

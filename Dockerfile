@@ -3,10 +3,6 @@ FROM registry.access.redhat.com/ubi8/ubi:8.2
 # Home directories required by acme.sh script.
 ENV OCP_TOOLS_VERSION=4.4
 ENV ACME_VERSION=2.8.6
-ENV ACME_HOME=/tmp/acme
-ENV CONFIG_HOME=/tmp/acme/config
-ENV CERT_HOME=/tmp/acme/certs
-ENV FINAL_CERTS=/tmp/certs/final
 
 WORKDIR /scripts
 
@@ -26,6 +22,7 @@ RUN curl https://mirror.openshift.com/pub/openshift-v4/clients/ocp/latest-$OCP_T
 
 WORKDIR /source
 
+# RUN curl -L https://github.com/acmesh-official/acme.sh/archive/$ACME_VERSION.tar.gz | tar -xz
 RUN curl -L https://github.com/acmesh-official/acme.sh/archive/$ACME_VERSION.tar.gz | tar -xz
 
-WORKDIR /acme
+WORKDIR /

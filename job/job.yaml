@@ -23,7 +23,7 @@ spec:
               /scripts/aws.sh
 
               echo "Done!"
-              
+
           imagePullPolicy: Always
           name: letsencrypt-certificates-job
       dnsPolicy: ClusterFirst

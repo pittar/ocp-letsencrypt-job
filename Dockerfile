@@ -22,7 +22,6 @@ RUN curl https://mirror.openshift.com/pub/openshift-v4/clients/ocp/latest-$OCP_T
 
 WORKDIR /source
 
-# RUN curl -L https://github.com/acmesh-official/acme.sh/archive/$ACME_VERSION.tar.gz | tar -xz
 RUN curl -L https://github.com/acmesh-official/acme.sh/archive/$ACME_VERSION.tar.gz | tar -xz
 
 WORKDIR /

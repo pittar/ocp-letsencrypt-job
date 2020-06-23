@@ -5,7 +5,7 @@ A `Job` that runs the Acme.sh script to generate Let's Encrypt certs for the "ap
 This is only for AWS (Route53) currently.
 
 To run:
-1) Clone this repo and update the "aws-creds.yaml" secret to include your AWS secret key and ID (a user with Route53 permissions should do fine).
+1) Clone this repo and update the "cloud-dns-credentials.yaml" secret to include your AWS secret key and ID (a user with Route53 permissions should do fine).
 2) `oc apply -k job`
 
 Done!

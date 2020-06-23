@@ -16,7 +16,7 @@ RUN dnf makecache && \
 
 WORKDIR /download
 
-RUN curl https://mirror.openshift.com/pub/openshift-v4/clients/ocp/latest-$OCP_TOOLS_VERSION/openshift-client-linux.tar.gz | tar -xz && \
+RUN curl https://mirror.openshift.com/pub/openshift-v4/clients/ocp/stable-$OCP_TOOLS_VERSION/openshift-client-linux.tar.gz | tar -xz && \
     mv oc /usr/bin/oc && \
     mv kubectl /usr/bin/kubectl
 

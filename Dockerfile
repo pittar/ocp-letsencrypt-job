@@ -10,7 +10,7 @@ ENV FINAL_CERTS=/tmp/certs/final
 
 WORKDIR /scripts
 
-COPY scripts/* .
+COPY scripts .
 
 # OpenSSL, git and socat required for script.
 RUN dnf makecache && \
@@ -20,14 +20,12 @@ RUN dnf makecache && \
 
 WORKDIR /download
 
-# ADD https://mirror.openshift.com/pub/openshift-v4/clients/ocp/latest-$OCP_TOOLS_VERSION/openshift-client-linux.tar.gz .
 RUN curl https://mirror.openshift.com/pub/openshift-v4/clients/ocp/latest-$OCP_TOOLS_VERSION/openshift-client-linux.tar.gz | tar -xz && \
     mv oc /usr/bin/oc && \
     mv kubectl /usr/bin/kubectl
 
 WORKDIR /source
 
-RUN curl -L https://github.com/acmesh-official/acme.sh/archive/$ACME_VERSION.tar.gz | tar -xz && \
-    alias acme.sh='/source/acme.sh/acme.sh'
+RUN curl -L https://github.com/acmesh-official/acme.sh/archive/$ACME_VERSION.tar.gz | tar -xz
 
 WORKDIR /acme

@@ -5,7 +5,7 @@ namespace: letsencrypt-job
 
 resources:
 - namespace.yaml
-- aws-creds.yaml
-- le-cert-job-sa.yaml
+- cloud-dns-credentials.yaml
+- job-serviceaccount.yaml
 - rbac.yaml
-- le-cert-job.yaml
+- job.yaml

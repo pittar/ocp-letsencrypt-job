@@ -1,7 +1,7 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: pipeline-ingresscontroller-clusterrole
+  name: letsencrypt-ingresscontroller-clusterrole
 rules:
   - apiGroups:
       - operator.openshift.io
@@ -15,7 +15,7 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: pipeline-certs-clusterrole
+  name: letsencrypt-certs-clusterrole
 rules:
   - apiGroups:
       - ""
@@ -29,23 +29,23 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: pipeline-ingresscontroller-updater
+  name: letsencrypt-ingresscontroller-patcher
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: pipeline-ingresscontroller-clusterrole
+  name: letsencrypt-ingresscontroller-clusterrole
 subjects:
   - kind: ServiceAccount
-    name: le-cert-job
+    name: letsencrypt-job-sa
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: pipeline-certs-reader
+  name: letsencrypt-certs-manager
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: pipeline-certs-clusterrole
+  name: letsencrypt-certs-clusterrole
 subjects:
   - kind: ServiceAccount
-    name: le-cert-job
+    name: letsencrypt-job-sa

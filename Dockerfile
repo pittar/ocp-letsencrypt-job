@@ -1,22 +1,33 @@
-#FROM quay.io/openshift/origin-cli:latest
 FROM registry.access.redhat.com/ubi8/ubi:8.2
 
-RUN dnf install openssl openssl-devel git socat -y
+# Home directories required by acme.sh script.
+ENV OCP_TOOLS_VERSION=4.4
+ENV ACME_VERSION=2.8.6
+ENV ACME_HOME=/tmp/acme
+ENV CONFIG_HOME=/tmp/acme/config
+ENV CERT_HOME=/tmp/acme/certs
+ENV FINAL_CERTS=/tmp/certs/final
 
-RUN openssl version
-RUN git version
+WORKDIR /scripts
 
-RUN mkdir -p /tmp/tools
+COPY scripts/* .
 
-ADD https://mirror.openshift.com/pub/openshift-v4/clients/ocp/latest/openshift-client-linux.tar.gz /tmp/tools/
+# OpenSSL, git and socat required for script.
+RUN dnf makecache && \
+    dnf install -y \
+    openssl socat curl \
+    && dnf clean all && rm -rf /var/cache/dnf/*
 
-RUN cd /tmp/tools && \
-    tar -xzf openshift-client-linux.tar.gz && \
+WORKDIR /download
+
+# ADD https://mirror.openshift.com/pub/openshift-v4/clients/ocp/latest-$OCP_TOOLS_VERSION/openshift-client-linux.tar.gz .
+RUN curl https://mirror.openshift.com/pub/openshift-v4/clients/ocp/latest-$OCP_TOOLS_VERSION/openshift-client-linux.tar.gz | tar -xz && \
     mv oc /usr/bin/oc && \
-    mv kubectl /usr/bin/kubectl && \
-    cd ~
+    mv kubectl /usr/bin/kubectl
 
-RUN oc version
-RUN kubectl version
+WORKDIR /source
 
+RUN curl -L https://github.com/acmesh-official/acme.sh/archive/$ACME_VERSION.tar.gz | tar -xz && \
+    alias acme.sh='/source/acme.sh/acme.sh'
 
+WORKDIR /acme

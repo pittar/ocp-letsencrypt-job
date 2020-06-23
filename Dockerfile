@@ -12,7 +12,7 @@ WORKDIR /scripts
 
 COPY scripts .
 
-# OpenSSL, git and socat required for script.
+# OpenSSL, curl and socat required for script.
 RUN dnf makecache && \
     dnf install -y \
     openssl socat curl \

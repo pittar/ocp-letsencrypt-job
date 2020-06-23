@@ -7,7 +7,7 @@ spec:
   template:
     spec:
       containers:
-        - image: quay.io/pittar/oc-acme:4.4-latest
+        - image: quay.io/pittar/oc-acme:4.4
           env:
             - name: STAGING
               value: 'true'

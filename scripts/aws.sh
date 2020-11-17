@@ -65,12 +65,15 @@ fi
 echo "Run: ./acme.sh ${install_args[@]}"
 ./acme.sh "${install_args[@]}"
 
+# Router cert secret name.
+ROUTER_CERTS_NAME="router-certs-$(date '+%Y-%m-%d')"
+
 if [ -f "$FINAL_CERTS/fullchain.pem" ]; then
     secret_args=(
         create
         secret
         tls
-        router-certs
+        "$ROUTER_CERTS_NAME"
         --cert="$FINAL_CERTS/fullchain.pem"
         --key="$FINAL_CERTS/key.pem"
         -n openshift-ingress
@@ -85,7 +88,7 @@ if [ -f "$FINAL_CERTS/fullchain.pem" ]; then
 
     # Patch ingress with new secret if NOT STAGING.
     if [ "$STAGING" == false ] ; then
-        oc patch ingresscontroller default -n openshift-ingress-operator --type=merge --patch='{"spec": { "defaultCertificate": { "name": "router-certs" }}}'
+        oc patch ingresscontroller default -n openshift-ingress-operator --type=merge --patch='{"spec": { "defaultCertificate": { "name": "'$ROUTER_CERTS_NAME'" }}}'
     fi
 else 
     echo "Error generating certs.  Please see logs."

@@ -13,6 +13,8 @@ spec:
               value: 'false'
             - name: PATCH_API_SERVER
               value: 'true'
+            - name: PATCH_API_SERVER
+              value: 'false'
           envFrom:
             - secretRef:
                 name: cloud-dns-credentials

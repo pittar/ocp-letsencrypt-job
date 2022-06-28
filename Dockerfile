@@ -1,4 +1,4 @@
-FROM registry.access.redhat.com/ubi8/ubi:8.6-855
+FROM registry.redhat.io/openshift4/ose-cli:v4.10.0-202206211856.p0.g45460a5.assembly.stream
 
 # Home directories required by acme.sh script.
 ENV OCP_TOOLS_VERSION=4.10

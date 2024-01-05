@@ -57,6 +57,9 @@ install_args=(
     --config-home /tmp
     --debug
 )
+if ! test -z "$LE_EXTRA_FLAGS"; then
+    install_args+=" $LE_EXTRA_FLAGS "
+fi
 if [ "$STAGING" == true ] ; then
     install_args+=(--staging)
 fi
@@ -95,7 +98,6 @@ if [ -f "$FINAL_CERTS/fullchain.pem" ]; then
         fi
     fi
 
-else 
+else
     echo "Error generating certs.  Please see logs."
 fi
-

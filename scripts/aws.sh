@@ -36,6 +36,9 @@ issue_args=(
     --config-home /tmp
     --debug
 )
+if ! test -z "$LE_EXTRA_FLAGS"; then
+    install_args+=" $LE_EXTRA_FLAGS "
+fi
 if [ "$STAGING" == true ] ; then
     issue_args+=(--staging)
 fi

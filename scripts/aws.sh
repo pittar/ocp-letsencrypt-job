@@ -32,7 +32,7 @@ issue_args=(
     --issue
     --dns dns_aws
     -d "$LE_API"
-    -d "*.$LE_WILDCARD" "$LE_EXTRA_FLAGS"
+    -d "*.$LE_WILDCARD" $LE_EXTRA_FLAGS
     --home /tmp
     --cert-home /tmp
     --config-home /tmp
@@ -49,7 +49,7 @@ echo "Run: ./acme.sh ${issue_args[@]}"
 install_args=(
     --install-cert
     -d "$LE_API"
-    -d "*.$LE_WILDCARD" "$LE_EXTRA_FLAGS"
+    -d "*.$LE_WILDCARD" $LE_EXTRA_FLAGS
     --cert-file "$FINAL_CERTS/cert.pem"
     --key-file "$FINAL_CERTS/key.pem"
     --fullchain-file "$FINAL_CERTS/fullchain.pem"

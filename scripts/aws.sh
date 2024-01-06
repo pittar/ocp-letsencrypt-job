@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -x
+
 if [[ -z "${STAGING}" ]]; then
     echo "STAGING environment variable must be set to 'true' or 'false'."
     exit 1

@@ -32,15 +32,12 @@ issue_args=(
     --issue
     --dns dns_aws
     -d "$LE_API"
-    -d "*.$LE_WILDCARD"
+    -d "*.$LE_WILDCARD" "$LE_EXTRA_FLAGS"
     --home /tmp
     --cert-home /tmp
     --config-home /tmp
     --debug
 )
-if ! test -z "$LE_EXTRA_FLAGS"; then
-    issue_args+=" $LE_EXTRA_FLAGS "
-fi
 if [ "$STAGING" == true ] ; then
     issue_args+=(--staging)
 fi
@@ -52,7 +49,7 @@ echo "Run: ./acme.sh ${issue_args[@]}"
 install_args=(
     --install-cert
     -d "$LE_API"
-    -d "*.$LE_WILDCARD"
+    -d "*.$LE_WILDCARD" "$LE_EXTRA_FLAGS"
     --cert-file "$FINAL_CERTS/cert.pem"
     --key-file "$FINAL_CERTS/key.pem"
     --fullchain-file "$FINAL_CERTS/fullchain.pem"
@@ -62,9 +59,6 @@ install_args=(
     --config-home /tmp
     --debug
 )
-if ! test -z "$LE_EXTRA_FLAGS"; then
-    install_args+=" $LE_EXTRA_FLAGS "
-fi
 if [ "$STAGING" == true ] ; then
     install_args+=(--staging)
 fi

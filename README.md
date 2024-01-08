@@ -11,3 +11,10 @@ To run:
 Done!
 
 This will take a few minutes, but once the job succeeds, you should have good certs for your api endpoint as well as wildcard cert for your "apps" domain.
+
+If you need to add additional Route53-maintained domains to your certificate, set the `LE_EXTRA_FLAGS` environment variable in `job.yaml` like so:
+```
+          env:
+            - name: LE_EXTRA_FLAGS
+              value: '-d one.example.com -d another.example.com'
+```

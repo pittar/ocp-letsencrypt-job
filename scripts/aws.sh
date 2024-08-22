@@ -30,6 +30,7 @@ echo "API: $LE_API"
 
 issue_args=(
     --issue
+    --server letsencrypt
     --dns dns_aws
     -d "$LE_API"
     -d "*.$LE_WILDCARD" $LE_EXTRA_FLAGS
